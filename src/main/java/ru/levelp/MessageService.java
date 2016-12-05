@@ -52,7 +52,6 @@ public class MessageService {
         return message;
     }
 
-
     public void deleteMessage(long id) {
         session.beginTransaction();
         Message message = (Message) session.createCriteria(Message.class)

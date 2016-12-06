@@ -1,5 +1,8 @@
 package ru.levelp;
 
+import ru.levelp.dao.MessageDAO;
+import ru.levelp.dao.MessageServiceMongo;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,11 +18,12 @@ public class ServerExample {
     private void start() {
         try {
             ServerSocket serverSocket = new ServerSocket(7071);
+            MessageDAO messageService = new MessageServiceMongo();
             System.out.println("Server started...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 String userName = "";
-                ClientHandler clientHandler = new ClientHandler(this, clientSocket, userName);
+                ClientHandler clientHandler = new ClientHandler(this, clientSocket, userName, messageService);
                 clientHandler.start();
                 clients.add(clientHandler);
             }

@@ -1,5 +1,7 @@
 package ru.levelp;
 
+import ru.levelp.dao.MessageDAO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +14,7 @@ public class ClientHandler extends Thread {
     private Socket socket;
     private SenderWorker senderWorker;
     private ServerExample server;
+    private MessageDAO messageService;
     private String userName;
 
     private enum Requests {
@@ -19,10 +22,11 @@ public class ClientHandler extends Thread {
         SERVER,
     }
 
-    public ClientHandler(ServerExample server, Socket socket, String userName) {
+    public ClientHandler(ServerExample server, Socket socket, String userName,MessageDAO messageService) {
         this.server = server;
         this.socket = socket;
         this.userName = userName;
+        this.messageService = messageService;
     }
 
     @Override
@@ -31,7 +35,6 @@ public class ClientHandler extends Thread {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
-            MessageService messageService = new MessageService();
             senderWorker = new SenderWorker(writer);
             senderWorker.start();
             String inputMessage;
@@ -50,7 +53,7 @@ public class ClientHandler extends Thread {
                     switch (Requests.valueOf(request.toUpperCase())) {
                         case ALL:
                             server.sendToAll(JsonConvertation.getInstance().saveToJson(message), this);
-                            messageService.addMessage(message);
+                            messageService.add(message);
                             break;
                         case SERVER:
                             if (message.getBody().equals("list")) {
@@ -59,29 +62,29 @@ public class ClientHandler extends Thread {
                                     String user = message.getSender();
                                     message.setBody(client);
                                     message.setReceiver("list");
-                                    System.out.println(JsonConvertation.getInstance().saveToJson(message));
+                                    //System.out.println(JsonConvertation.getInstance().saveToJson(message));
                                     server.sendToUser(JsonConvertation.getInstance().saveToJson(message), user);
                                 }
                             }
                             if (message.getBody().equals("history")) {
-                                List<Message> outMessages = messageService.getAllMessagesBySender(message.getSender());
-                                for (Message mes : outMessages) {
-                                        System.out.println(JsonConvertation.getInstance().saveToJson(mes));
-                                        server.sendToUser(JsonConvertation.getInstance()
-                                                .saveToJson(mes), message.getSender());
-                                    }
-                                List<Message> inMessages = messageService.getAllMessagesByReceiver(message.getSender());
+                                List<Message> inMessages = messageService.getMessagesByReceiver(message.getSender());
                                 for (Message mes : inMessages) {
                                     System.out.println(JsonConvertation.getInstance().saveToJson(mes));
                                     server.sendToUser(JsonConvertation.getInstance()
                                             .saveToJson(mes), message.getSender());
                                 }
+                                List<Message> outMessages = messageService.getMessagesBySender(message.getSender());
+                                for (Message mes : outMessages) {
+                                        System.out.println(JsonConvertation.getInstance().saveToJson(mes));
+                                        server.sendToUser(JsonConvertation.getInstance()
+                                                .saveToJson(mes), message.getSender());
+                                    }
                             }
                             break;
                     }
                 } catch (IllegalArgumentException ex) {
                     server.sendToUser(JsonConvertation.getInstance().saveToJson(message), message.getReceiver());
-                    messageService.addMessage(message);
+                    messageService.add(message);
                 }
             }
             server.disconnectClient(this);

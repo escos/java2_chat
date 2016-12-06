@@ -1,11 +1,9 @@
 package ru.levelp.Animals;
 
-
 import com.mongodb.*;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

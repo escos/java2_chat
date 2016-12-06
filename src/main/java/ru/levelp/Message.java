@@ -55,7 +55,7 @@ public class Message {
         return time;
     }
 
-    public void setTime(long receiver){
+    public void setTime(long time){
         this.time = time;
     }
 

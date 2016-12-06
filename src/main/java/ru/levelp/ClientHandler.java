@@ -62,20 +62,17 @@ public class ClientHandler extends Thread {
                                     String user = message.getSender();
                                     message.setBody(client);
                                     message.setReceiver("list");
-                                    //System.out.println(JsonConvertation.getInstance().saveToJson(message));
                                     server.sendToUser(JsonConvertation.getInstance().saveToJson(message), user);
                                 }
                             }
                             if (message.getBody().equals("history")) {
                                 List<Message> inMessages = messageService.getMessagesByReceiver(message.getSender());
                                 for (Message mes : inMessages) {
-                                    System.out.println(JsonConvertation.getInstance().saveToJson(mes));
                                     server.sendToUser(JsonConvertation.getInstance()
                                             .saveToJson(mes), message.getSender());
                                 }
                                 List<Message> outMessages = messageService.getMessagesBySender(message.getSender());
                                 for (Message mes : outMessages) {
-                                        System.out.println(JsonConvertation.getInstance().saveToJson(mes));
                                         server.sendToUser(JsonConvertation.getInstance()
                                                 .saveToJson(mes), message.getSender());
                                     }

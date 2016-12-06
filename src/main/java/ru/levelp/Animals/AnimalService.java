@@ -26,7 +26,7 @@ public class AnimalService {
         Animal animal = new Animal();
         animal.setId((long) (Math.random() * Long.MAX_VALUE));
         animal.setAge((int) (Math.random() * 100));
-        animal.setColor((int) (Math.random() * 255));
+        animal.setColor((int) (Math.random() * 16777215));
         if (gen.nextBoolean())
             animal.setGender("boy");
         else animal.setGender("girl");
@@ -79,13 +79,13 @@ public class AnimalService {
 
     public List<Animal> getAllDark() {
         return db.createQuery(Animal.class)
-                .field("color").lessThan(126)
+                .field("color").lessThan(8388608)
                 .asList();
     }
 
     public List<Animal> getAllLight() {
         return db.createQuery(Animal.class)
-                .field("color").greaterThanOrEq(155)
+                .field("color").greaterThanOrEq(8388608)
                 .asList();
     }
 
@@ -136,13 +136,13 @@ public class AnimalService {
     public void printAnimals(List<Animal> animals) {
         for (Animal a : animals
                 ) {
-            System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
+            System.out.printf("%12s %10s %10d %5s %d year(s)\n ",
                     a.getName(), a.getType(), a.getColor(), a.getGender(), a.getAge());
         }
     }
 
     public void printAnimal(Animal animal) {
-            System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
+            System.out.printf("%12s %10s %10d %5s %d year(s)\n ",
                     animal.getName(), animal.getType(), animal.getColor(), animal.getGender(), animal.getAge());
     }
 }

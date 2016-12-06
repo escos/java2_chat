@@ -2,6 +2,7 @@ package ru.levelp;
 
 import ru.levelp.dao.MessageDAO;
 import ru.levelp.dao.MessageServiceMongo;
+import ru.levelp.dao.MessageServiceSQL;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -18,7 +19,7 @@ public class ServerExample {
     private void start() {
         try {
             ServerSocket serverSocket = new ServerSocket(7071);
-            MessageDAO messageService = new MessageServiceMongo();
+            MessageDAO messageService = new MessageServiceSQL();
             System.out.println("Server started...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();

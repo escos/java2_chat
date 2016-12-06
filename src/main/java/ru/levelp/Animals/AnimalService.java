@@ -5,13 +5,16 @@ import com.mongodb.*;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.jar.Attributes;
 
 
 public class AnimalService {
     private Datastore db;
+
     private Random gen = new Random();
 
     public AnimalService() {
@@ -58,7 +61,7 @@ public class AnimalService {
                 .get();
     }
 
-    public Animal getByName(String name){
+    public Animal getByName(String name) {
         return db.createQuery(Animal.class)
                 .field("type").equal(name)
                 .get();
@@ -100,16 +103,30 @@ public class AnimalService {
                 .asList();
     }
 
-    public DBObject getYoungestBoy() {
-        DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender","boy"));
-        animal.sort(new BasicDBObject("age",1)).limit(1);
-        return animal.next();
+    public Animal getYoungestBoy() {
+        DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender", "boy"));
+        animal.sort(new BasicDBObject("age", 1)).limit(1);
+        DBObject dbObject = animal.next();
+        Animal animal1 = new Animal();
+        animal1.setAge((Integer) dbObject.get("age"));
+        animal1.setColor((Integer) dbObject.get("color"));
+        animal1.setName((String) dbObject.get("name"));
+        animal1.setType((String) dbObject.get("type"));
+        animal1.setGender((String) dbObject.get("gender"));
+        return animal1;
     }
 
-    public DBObject getOldestGirl() {
-        DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender","girl"));
-        animal.sort(new BasicDBObject("age",-1)).limit(1);
-        return animal.next();
+    public Animal getOldestGirl() {
+        DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender", "girl"));
+        animal.sort(new BasicDBObject("age", -1)).limit(1);
+        DBObject dbObject = animal.next();
+        Animal animal1 = new Animal();
+        animal1.setAge((Integer) dbObject.get("age"));
+        animal1.setColor((Integer) dbObject.get("color"));
+        animal1.setName((String) dbObject.get("name"));
+        animal1.setType((String) dbObject.get("type"));
+        animal1.setGender((String) dbObject.get("gender"));
+        return animal1;
     }
 
     public Animal delete(long id) {
@@ -118,12 +135,17 @@ public class AnimalService {
         return deletedAnimal;
     }
 
-    public void printAnimals(List<Animal> animals){
-        for (Animal a: animals
-             ) {
-             System.out.printf(" %s %10s %d %10s %d\n ",
+    public void printAnimals(List<Animal> animals) {
+        for (Animal a : animals
+                ) {
+            System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
                     a.getName(), a.getType(), a.getColor(), a.getGender(), a.getAge());
         }
+    }
+
+    public void printAnimal(Animal animal) {
+            System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
+                    animal.getName(), animal.getType(), animal.getColor(), animal.getGender(), animal.getAge());
     }
 }
 

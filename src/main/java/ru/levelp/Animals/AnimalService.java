@@ -82,30 +82,16 @@ public class AnimalService {
                 .asList();
     }
 
-    public Animal getYoungestBoy() {
+    public DBObject getYoungestBoy() {
         DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender", "boy"));
         animal.sort(new BasicDBObject("age", 1)).limit(1);
-        DBObject dbObject = animal.next();
-        Animal animal1 = new Animal();
-        animal1.setAge((Integer) dbObject.get("age"));
-        animal1.setColor((Integer) dbObject.get("color"));
-        animal1.setName((String) dbObject.get("name"));
-        animal1.setType((String) dbObject.get("type"));
-        animal1.setGender((String) dbObject.get("gender"));
-        return animal1;
+        return animal.next();
     }
 
-    public Animal getOldestGirl() {
+    public DBObject getOldestGirl() {
         DBCursor animal = db.getCollection(Animal.class).find(new BasicDBObject("gender", "girl"));
         animal.sort(new BasicDBObject("age", -1)).limit(1);
-        DBObject dbObject = animal.next();
-        Animal animal1 = new Animal();
-        animal1.setAge((Integer) dbObject.get("age"));
-        animal1.setColor((Integer) dbObject.get("color"));
-        animal1.setName((String) dbObject.get("name"));
-        animal1.setType((String) dbObject.get("type"));
-        animal1.setGender((String) dbObject.get("gender"));
-        return animal1;
+        return animal.next();
     }
 
     public Animal delete(long id) {

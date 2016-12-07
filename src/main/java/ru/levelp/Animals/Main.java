@@ -27,8 +27,8 @@ public class Main {
 //        System.out.println("Older than 30:");
 //        animalService.printAnimals(animalService.getOlder(30));
         System.out.println("Youngest boy:");
-        animalOperations.printAnimal(animalService.getYoungestBoy());
+        animalOperations.printDBObject(animalService.getYoungestBoy());
         System.out.println("Oldest girl:");
-        animalOperations.printAnimal(animalService.getOldestGirl());
+        animalOperations.printDBObject(animalService.getOldestGirl());
     }
 }

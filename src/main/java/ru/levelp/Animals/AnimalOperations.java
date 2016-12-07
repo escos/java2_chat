@@ -1,5 +1,7 @@
 package ru.levelp.Animals;
 
+import com.mongodb.DBObject;
+
 import java.util.List;
 import java.util.Random;
 
@@ -7,7 +9,7 @@ public class AnimalOperations {
 
     private static Random gen = new Random();
 
-    public Animal createAnimal(){
+    public Animal createAnimal() {
         Animal animal = new Animal();
         animal.setId((long) (Math.random() * Long.MAX_VALUE));
         animal.setAge((int) (Math.random() * 100));
@@ -29,16 +31,17 @@ public class AnimalOperations {
         return animal;
     }
 
-    public void printAnimal(Animal animal){
-        System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
-                animal.getName(), animal.getType(), animal.getColor(), animal.getGender(), animal.getAge());
-    }
-
-    public void printListAnimals(List<Animal> animals){
+    public void printListAnimals(List<Animal> animals) {
         for (Animal a : animals
                 ) {
-            System.out.printf("%12s %10s %10s %5s  %d year(s)\n ",
+            System.out.printf("%-12s %10s %10s %5s %d year(s)\n ",
                     a.getName(), a.getType(), a.getColor(), a.getGender(), a.getAge());
         }
+    }
+
+    public void printDBObject(DBObject dbObject) {
+        System.out.printf("%12s %10s %10s %5s %d year(s)\n ",
+                dbObject.get("name"), dbObject.get("type")
+                , dbObject.get("color"), dbObject.get("gender"), dbObject.get("age"));
     }
 }

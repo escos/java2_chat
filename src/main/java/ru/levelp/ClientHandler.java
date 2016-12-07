@@ -17,12 +17,15 @@ public class ClientHandler extends Thread {
     private MessageDAO messageService;
     private String userName;
 
+    private static final String GET_LIST = "list";
+    public static final String GET_HISTORY = "history";
+
     private enum Requests {
         ALL,
         SERVER,
     }
 
-    public ClientHandler(ServerExample server, Socket socket, String userName,MessageDAO messageService) {
+    public ClientHandler(ServerExample server, Socket socket, String userName, MessageDAO messageService) {
         this.server = server;
         this.socket = socket;
         this.userName = userName;
@@ -56,26 +59,30 @@ public class ClientHandler extends Thread {
                             messageService.add(message);
                             break;
                         case SERVER:
-                            if (message.getBody().equals("list")) {
+                            if (message.getBody().equals(GET_LIST)) {
                                 ArrayList<String> clients = server.clientList();
                                 for (String client : clients) {
                                     String user = message.getSender();
                                     message.setBody(client);
-                                    message.setReceiver("list");
+                                    message.setReceiver(GET_LIST);
                                     server.sendToUser(JsonConvertation.getInstance().saveToJson(message), user);
                                 }
                             }
-                            if (message.getBody().equals("history")) {
-                                List<Message> inMessages = messageService.getMessagesByReceiver(message.getSender());
+                            if (message.getBody().equals(GET_HISTORY)) {
+                                List<Message> inMessages = messageService
+                                        .getMessagesByReceiver(message.getSender());
                                 for (Message mes : inMessages) {
+                                    mes.setReceiver(GET_HISTORY);
                                     server.sendToUser(JsonConvertation.getInstance()
                                             .saveToJson(mes), message.getSender());
                                 }
-                                List<Message> outMessages = messageService.getMessagesBySender(message.getSender());
+                                List<Message> outMessages = messageService
+                                        .getMessagesBySender(message.getSender());
                                 for (Message mes : outMessages) {
-                                        server.sendToUser(JsonConvertation.getInstance()
-                                                .saveToJson(mes), message.getSender());
-                                    }
+                                    mes.setSender(GET_HISTORY);
+                                    server.sendToUser(JsonConvertation.getInstance()
+                                            .saveToJson(mes), message.getSender());
+                                }
                             }
                             break;
                     }

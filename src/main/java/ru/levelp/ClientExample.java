@@ -9,8 +9,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class ClientExample {
-    public static final String IP = "127.0.0.1";
-    public static final int PORT = 7071;
+
+    private static final String IP = "127.0.0.1";
+    private static final int PORT = 7071;
 
     public static void main(String[] args) {
         try {
@@ -23,7 +24,7 @@ public class ClientExample {
             String login = "";
             Message message = new Message(login, "server", System.currentTimeMillis(), "login");
 
-            if (!(inputConsole = console.readLine()).equals(null)) {
+            if ((inputConsole = console.readLine())!=null) {
                 if (inputConsole.contains(" ")) {
                     int pos = inputConsole.indexOf(" ");
                     message.setSender(inputConsole.substring(0, pos));

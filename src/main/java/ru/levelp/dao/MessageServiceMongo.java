@@ -16,24 +16,14 @@ public class MessageServiceMongo extends BaseMongoService<Message> implements Me
     }
 
     public List<Message> getMessagesBySender(String sender) {
-        List<Message> outputMessages = request().createQuery(Message.class)
-                .field("sender").equal(sender)
+        return request().createQuery(Message.class)
+                .field(MessageDAO.FIELD_SENDER).equal(sender)
                 .asList();
-        for (Message message:outputMessages
-                ) {
-            message.setSender("history");
-        }
-        return outputMessages;
     }
 
     public List<Message> getMessagesByReceiver(String receiver) {
-        List<Message> inputMessages = request().createQuery(Message.class)
-                .field("receiver").equal(receiver)
+        return request().createQuery(Message.class)
+                .field(MessageDAO.FIELD_RECEIVER).equal(receiver)
                 .asList();
-        for (Message message:inputMessages
-                ) {
-            message.setReceiver("history");
-        }
-        return inputMessages;
     }
 }

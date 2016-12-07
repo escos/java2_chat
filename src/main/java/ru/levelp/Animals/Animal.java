@@ -2,12 +2,10 @@ package ru.levelp.Animals;
 
 import javax.persistence.*;
 
-//morphia
 @org.mongodb.morphia.annotations.Entity("Animals")
 
 public class Animal {
 
-    //morphia
     @org.mongodb.morphia.annotations.Id
     private long id;
 

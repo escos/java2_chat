@@ -23,7 +23,7 @@ public class ClientReceiver extends Thread {
         try {
             String serverMessage;
             BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while (!(serverMessage = serverReader.readLine()).equals(null)) {
+            while ((serverMessage = serverReader.readLine()) != null) {
                 Message inputMessage = JsonConvertation.getInstance().parsefromJson(serverMessage);
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd.MM.yyyy");
                 String sDate = sdf.format(inputMessage.getTime());
@@ -33,16 +33,16 @@ public class ClientReceiver extends Thread {
                             System.out.println(" User " + inputMessage.getBody());
                             break;
                         case HISTORY:
-                            System.out.println("Input message from: " + inputMessage.getSender() +
-                                    " Message: " + inputMessage.getBody() + " Time: " + sDate);
+                            System.out.printf("Input message from: %-10s Message: %-25s Time: %s \n",
+                                    inputMessage.getSender(), inputMessage.getBody(), sDate);
                             break;
                     }
                 } catch (IllegalArgumentException ex) {
-                    if (inputMessage.getSender().equals("history")) {
-                        System.out.println("Output message to: " + inputMessage.getReceiver() +
-                                " Message: " + inputMessage.getBody() + " Time: " + sDate);
-                    } else System.out.println("Sender: " + inputMessage.getSender() +
-                            " Message: " + inputMessage.getBody() + " Time: " + sDate);
+                    if (inputMessage.getSender().equals(ClientHandler.GET_HISTORY)) {
+                        System.out.printf("Output message to : %-10s Message: %-25s Time: %s \n",
+                                inputMessage.getReceiver(), inputMessage.getBody(), sDate);
+                    } else System.out.printf("Sender: %10s Message: %-25s Time: %s \n",
+                            inputMessage.getSender(), inputMessage.getBody(), sDate);
                 }
             }
             serverReader.close();

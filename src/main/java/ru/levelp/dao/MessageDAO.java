@@ -6,6 +6,9 @@ import java.util.List;
 
 public interface MessageDAO {
 
+    String FIELD_SENDER = "sender";
+    String FIELD_RECEIVER = "receiver";
+
     void add(Message message);
 
     List<Message> getMessagesBySender(String sender);

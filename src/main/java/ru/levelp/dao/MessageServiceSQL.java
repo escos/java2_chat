@@ -25,13 +25,12 @@ public class MessageServiceSQL implements MessageDAO{
 
     public List<Message> getMessagesBySender(String sender) {
         return (List<Message>) session.createCriteria(Message.class)
-                .add(Restrictions.like(MessageDAO.FIELD_SENDER, sender, MatchMode.ANYWHERE)).list();
+                .add(Restrictions.eq(MessageDAO.FIELD_SENDER, sender)).list();
     }
 
     public List<Message> getMessagesByReceiver(String receiver) {
-
         return session.createCriteria(Message.class)
-                .add(Restrictions.like(MessageDAO.FIELD_RECEIVER, receiver, MatchMode.ANYWHERE)).list();
+                .add(Restrictions.eq(MessageDAO.FIELD_RECEIVER, receiver)).list();
     }
 
     public Message delete(long id) {

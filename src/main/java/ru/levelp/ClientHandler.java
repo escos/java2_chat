@@ -72,6 +72,7 @@ public class ClientHandler extends Thread {
                                 List<Message> inMessages = messageService
                                         .getMessagesByReceiver(message.getSender());
                                 for (Message mes : inMessages) {
+                                    if (mes.getSender().equals(mes.getReceiver())) break;
                                     mes.setReceiver(GET_HISTORY);
                                     server.sendToUser(JsonConvertation.getInstance()
                                             .saveToJson(mes), message.getSender());

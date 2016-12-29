@@ -15,6 +15,8 @@ public interface MessageDAO {
 
     List<Message> getMessagesByReceiver(String receiver);
 
+    List<Message> getMessagesByUser(String user);
+
     List<Message> getAll();
 
     Message delete(long id);

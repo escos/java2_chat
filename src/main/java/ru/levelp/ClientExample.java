@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class ClientExample {
 
@@ -22,7 +23,7 @@ public class ClientExample {
             clientReceiver.start();
             String inputConsole;
             String login = "";
-            Message message = new Message(login, "server", System.currentTimeMillis(), "login");
+            Message message = new Message(login, Command.SERVER, System.currentTimeMillis(), "login");
 
             if ((inputConsole = console.readLine())!=null) {
                 if (inputConsole.contains(" ")) {
@@ -33,15 +34,16 @@ public class ClientExample {
                 writer.flush();
             }
 
-            while (!(inputConsole = console.readLine()).equals("exit")) {
+            while (!(inputConsole = console.readLine()).equals(Command.EXIT)) {
                 message.setTime(System.currentTimeMillis());
+                message.setId(UUID.randomUUID().getLeastSignificantBits());
                 if ((inputConsole.indexOf("@") == 0) && inputConsole.contains(":")) {
                     int pos = inputConsole.indexOf(":");
                     message.setReceiver(inputConsole.substring(1, pos));
                     message.setBody(inputConsole.substring(pos + 1));
                 } else {
                     message.setBody(inputConsole);
-                    message.setReceiver("all");
+                    message.setReceiver(Command.ALL);
                 }
                 writer.println(JsonConvertation.getInstance().saveToJson(message));
                 writer.flush();

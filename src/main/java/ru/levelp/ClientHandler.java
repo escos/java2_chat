@@ -17,14 +17,6 @@ public class ClientHandler extends Thread {
     private MessageDAO messageService;
     private String userName;
 
-    private static final String GET_LIST = "list";
-    public static final String GET_HISTORY = "history";
-
-    private enum Requests {
-        ALL,
-        SERVER,
-    }
-
     public ClientHandler(ServerExample server, Socket socket, String userName, MessageDAO messageService) {
         this.server = server;
         this.socket = socket;
@@ -52,44 +44,38 @@ public class ClientHandler extends Thread {
                 System.out.println(inputMessage);
                 Message message = JsonConvertation.getInstance().parsefromJson(inputMessage);
                 String request = message.getReceiver();
-                try {
-                    switch (Requests.valueOf(request.toUpperCase())) {
-                        case ALL:
-                            server.sendToAll(JsonConvertation.getInstance().saveToJson(message), this);
-                            messageService.add(message);
-                            break;
-                        case SERVER:
-                            if (message.getBody().equals(GET_LIST)) {
-                                ArrayList<String> clients = server.clientList();
-                                for (String client : clients) {
-                                    String user = message.getSender();
-                                    message.setBody(client);
-                                    message.setReceiver(GET_LIST);
-                                    server.sendToUser(JsonConvertation.getInstance().saveToJson(message), user);
-                                }
+                switch (request.toLowerCase()) {
+                    case Command.ALL:
+                        server.sendToAll(JsonConvertation.getInstance().saveToJson(message), this);
+                        messageService.add(message);
+                        break;
+                    case Command.SERVER:
+                        if (message.getBody().equals(Command.LIST)) {
+                            List<String> clients = server.clientList();
+                            for (String client : clients) {
+                                message.setBody(client);
+                                message.setReceiver(Command.LIST);
+                                server.sendToUser(JsonConvertation.getInstance().saveToJson(message),
+                                        message.getSender());
                             }
-                            if (message.getBody().equals(GET_HISTORY)) {
-                                List<Message> inMessages = messageService
-                                        .getMessagesByReceiver(message.getSender());
-                                for (Message mes : inMessages) {
-                                    if (mes.getSender().equals(mes.getReceiver())) break;
-                                    mes.setReceiver(GET_HISTORY);
-                                    server.sendToUser(JsonConvertation.getInstance()
-                                            .saveToJson(mes), message.getSender());
-                                }
-                                List<Message> outMessages = messageService
-                                        .getMessagesBySender(message.getSender());
-                                for (Message mes : outMessages) {
-                                    mes.setSender(GET_HISTORY);
+                        }
+                        if (message.getBody().equals(Command.HISTORY)) {
+                            List<Message> messages = messageService
+                                    .getMessagesByUser(message.getSender());
+                            for (Message mes : messages) {
+                                if (!mes.getSender().equals(mes.getReceiver())) {
+                                    if (mes.getSender().equals(message.getSender()))
+                                        mes.setSender(Command.HISTORY);
+                                    else mes.setReceiver(Command.HISTORY);
                                     server.sendToUser(JsonConvertation.getInstance()
                                             .saveToJson(mes), message.getSender());
                                 }
                             }
-                            break;
-                    }
-                } catch (IllegalArgumentException ex) {
-                    server.sendToUser(JsonConvertation.getInstance().saveToJson(message), message.getReceiver());
-                    messageService.add(message);
+                        }
+                        break;
+                    default:
+                        server.sendToUser(JsonConvertation.getInstance().saveToJson(message), message.getReceiver());
+                        messageService.add(message);
                 }
             }
             server.disconnectClient(this);

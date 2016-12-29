@@ -19,7 +19,7 @@ public class ServerExample {
     private void start() {
         try {
             ServerSocket serverSocket = new ServerSocket(7071);
-            MessageDAO messageService = new MessageServiceSQL();
+            MessageDAO messageService = new MessageServiceMongo();
             System.out.println("Server started...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();

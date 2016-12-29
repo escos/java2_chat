@@ -1,5 +1,6 @@
 package ru.levelp.dao;
 
+import org.mongodb.morphia.query.Query;
 import ru.levelp.Message;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class MessageServiceMongo extends BaseMongoService<Message> implements Me
         super(Message.class);
     }
 
+    @Override
     public List<Message> getAll() {
         return request().createQuery(Message.class)
                 .asList();
@@ -25,5 +27,13 @@ public class MessageServiceMongo extends BaseMongoService<Message> implements Me
         return request().createQuery(Message.class)
                 .field(MessageDAO.FIELD_RECEIVER).equal(receiver)
                 .asList();
+    }
+
+    @Override
+    public List<Message> getMessagesByUser(String user) {
+        Query<Message> query = request().createQuery(Message.class);
+        query.or(query.criteria(MessageDAO.FIELD_RECEIVER).equal(user),
+                query.criteria(MessageDAO.FIELD_SENDER).equal(user));
+        return query.asList();
     }
 }
